@@ -6,8 +6,7 @@ import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
-import org.apache.lucene.document.LongField;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 
 /**
  *	a class to store information about a document
@@ -58,8 +57,8 @@ public class Doc {
 		return m_text;
 	}
 	/**
-	 * a conversion method to generate a org.w3c.dom.Document out of the instance
-	 * @return an org.w3c.dom.Document with the same information 
+	 * a conversion method to generate a org.apache.lucene.document.Document out of the instance
+	 * @return an org.apache.lucene.document.Document with the same information 
 	 */
 	public Document toDocument(){
 		Document d = new Document();
@@ -67,13 +66,13 @@ public class Doc {
 		Field id = new IntField("id", m_id, Field.Store.YES);
 		d.add(id);
 		
-		Field date = new StringField("date", DateTools.dateToString(m_date, DateTools.Resolution.MILLISECOND), Field.Store.NO);
+		Field date = new IntField("date", Integer.parseInt(DateTools.dateToString(m_date, DateTools.Resolution.DAY)), Field.Store.YES);
 		d.add(date);
 		
-		Field title = new StringField("title", m_title, Field.Store.NO);
+		Field title = new TextField("title", m_title, Field.Store.YES);
 		d.add(title);
 		
-		Field text = new StringField("text", m_text, Field.Store.NO);
+		Field text = new TextField("text", m_text, Field.Store.YES);
 		d.add(text);
 		
 		return d;

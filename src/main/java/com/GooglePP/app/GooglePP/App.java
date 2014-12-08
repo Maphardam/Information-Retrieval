@@ -13,7 +13,10 @@ public class App
 		String filePath = "reut2-000.xml";
 		List<Doc> docs = XmlParser.getDocs(filePath);
 		
-		IndexDocs.indexDocs(docs);
+		//use this command for creating an index
+		//IndexAndSearch.indexDocs(docs);
 		
+		//use this command for querying
+		IndexAndSearch.searchDocs("Japanese");
     }
 }
