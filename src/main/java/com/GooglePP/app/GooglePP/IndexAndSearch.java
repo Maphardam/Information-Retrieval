@@ -83,8 +83,14 @@ public class IndexAndSearch {
 	    System.out.println(q);
 	    
 	    //search the docs containing the query
+
 	    ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
-	    System.out.println(Arrays.toString(sd));
+		for(int i=0; i<10; i++){
+			ScoreDoc currentdoc = sd[i];
+			
+		System.out.println(i+1 + ". " + searcher.doc(sd[i].doc).get("title")+ "( ID: " +currentdoc.doc + " relevance score: "+currentdoc.score + ")" );
+		}
+	//    System.out.println(Arrays.toString(sd));
 	    
 		} catch (IOException e){System.out.println("Error");} catch (ParseException e) {System.out.println("Another Error");}
 	}
