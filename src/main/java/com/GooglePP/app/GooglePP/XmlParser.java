@@ -101,7 +101,7 @@ public class XmlParser {
 		NodeList nodeList = doc.getChildNodes().item(0).getChildNodes();
 		List<Doc> docs = new ArrayList<Doc>();
 		// create a dateformat used to parse the date
-		DateFormat dateFormat = new SimpleDateFormat("DD-MMM-YYYY HH:mm:ss.SS",
+		DateFormat dateFormat = new SimpleDateFormat("DD-MMM-yyyy HH:mm:ss.SS",
 				Locale.ENGLISH);
 		// iterate through every saved document
 		for (int i = 0; i < nodeList.getLength(); ++i) {
@@ -148,16 +148,16 @@ public class XmlParser {
 		return docs;
 	}
 
-//	public static void main(String[] args) {
-//		String filePath = "reut2-000.xml";
-//		List<Doc> docs = getDocs(filePath);
-//		for (int i = 0; i < docs.size(); ++i) {
-//			Doc currentDoc = docs.get(i);
-//			System.out.println("ID: " + currentDoc.getId());
-//			System.out.println("DATE: " + currentDoc.getDate());
-//			System.out.println("TITLE: " + currentDoc.getTitle());
-//			System.out.println("TEXT: " + currentDoc.getText().split("\n")[0]);
-//			System.out.println("####################################################################");
-//		}
-//	}
+	public static void main(String[] args) {
+		String filePath = "reut2-000.xml";
+		List<Doc> docs = getDocs(filePath);
+		for (int i = 0; i < 1; ++i) {
+			Doc currentDoc = docs.get(i);
+			System.out.println("ID: " + currentDoc.getId());
+			System.out.println("DATE: " + currentDoc.getDate());
+			System.out.println("TITLE: " + currentDoc.getTitle());
+			System.out.println("TEXT: " + currentDoc.getText().split("\n")[0]);
+			System.out.println("####################################################################");
+		}
+	}
 }
