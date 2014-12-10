@@ -56,16 +56,9 @@ public class App
 						System.out.println("Für ihre Eingabe "+ query + " wurden diese Artikel gefunden:");
 						IndexAndSearch.searchDocs(indexPath, query);
 			    	}
-
-					//use this command for creating an index
-					//IndexAndSearch.indexDocs(docs);
-					//use this command for querying
 			    }
 			    
-			    
-				
-				
-				
+		
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

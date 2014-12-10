@@ -3,7 +3,6 @@ package com.GooglePP.app.GooglePP;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -14,8 +13,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -80,39 +79,29 @@ public class IndexAndSearch {
 	 */
 	public static void searchDocs(String indexPath, String queryText) {
 		try {
-
-			// define the index searcher and the dir of our index
-			IndexReader reader = DirectoryReader.open(FSDirectory
-					.open(new File(indexPath)));
-			IndexSearcher searcher = new IndexSearcher(reader);
-
-			// IMPORTANT: use the same analyzer for querying as used for
-			// indexing
-			Analyzer analyzer = new StandardAnalyzer();
-			// query the queryText to a correct query
-			// so far, we only consider terms in the 'text' field
-			QueryParser parser = new QueryParser("text", analyzer);
-			Query q = parser.parse(queryText);
-			System.out.println(q);
-
-			// search the docs containing the query
-
-			ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
-			for (int i = 0; i < 10; i++) {
-				ScoreDoc currentdoc = sd[i];
-
-				System.out.println(i + 1 + ". "
-						+ searcher.doc(sd[i].doc).get("title") + "( ID: "
-						+ currentdoc.doc + " relevance score: "
-						+ currentdoc.score + ")");
-			}
-			// System.out.println(Arrays.toString(sd));
-
-		} catch (IOException e) {
-			System.out.println("Error");
-		} catch (ParseException e) {
-			System.out.println("Another Error");
+			
+		//define the index searcher and the dir of our index
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+	    IndexSearcher searcher = new IndexSearcher(reader);
+	    
+	    //IMPORTANT: use the same analyzer for querying as used for indexing
+	    Analyzer analyzer = new StandardAnalyzer();
+	    
+	    //query the queryText to a correct query
+	    String[] fields = {"text", "title", "date"};
+	    MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
+	    Query q = parser.parse(queryText);
+	    ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
+	    
+		for(int i=0; i< Math.min(10, sd.length); i++){
+			ScoreDoc currentdoc = sd[i];
+			
+			System.out.println(i+1 + ". " + searcher.doc(sd[i].doc).get("title")+ 
+					"( ID: " +currentdoc.doc + " relevance score: "+currentdoc.score + ")" );
 		}
+	    
+		} catch (IOException e){System.out.println("Error");} 
+		  catch (ParseException e){System.out.println("Another Error");}
 	}
 
 }
