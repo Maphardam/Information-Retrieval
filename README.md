@@ -6,7 +6,7 @@ This repository contains the source code developed in the course "Information Re
 Compiling & execution
 ==================================================================================================
 To create this project with maven excute the command: mvn package .
-With java -jar "target/GooglePP-1-shaded.jar" you can execute this application.
+With java -jar "target/GooglePP-1.jar" you can execute this application.
 (The number after GooglePP- should indicate the assignment)
 
 
