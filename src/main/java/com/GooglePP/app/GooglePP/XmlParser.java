@@ -149,16 +149,16 @@ public class XmlParser {
 		return docs;
 	}
 
-	// public static void main(String[] args) {
-	// String filePath = "reut2-000.xml";
-	// List<Doc> docs = getDocs(filePath);
-	// for (int i = 0; i < docs.size(); ++i) {
-	// Doc currentDoc = docs.get(i);
-	// System.out.println("ID: " + currentDoc.getId());
-	// System.out.println("DATE: " + currentDoc.getDate());
-	// System.out.println("TITLE: " + currentDoc.getTitle());
-	// System.out.println("TEXT: " + currentDoc.getText().split("\n")[0]);
-	// System.out.println("####################################################################");
-	// }
-	// }
+	public static void main(String[] args) {
+		String filePath = "reut2-000.xml";
+		List<Doc> docs = getDocs(filePath);
+		for (int i = 0; i < docs.size(); ++i) {
+			Doc currentDoc = docs.get(i);
+			System.out.println("ID: " + currentDoc.getId());
+			System.out.println("DATE: " + currentDoc.getDate());
+			System.out.println("TITLE: " + currentDoc.getTitle());
+			System.out.println("TEXT: " + currentDoc.getText().split("\n")[0]);
+			System.out.println("####################################################################");
+		}
+	}
 }

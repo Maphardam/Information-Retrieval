@@ -15,10 +15,10 @@ import org.apache.lucene.search.TopDocs;
  */
 public class App {
 	public static void main(String[] args) {
-		String filePath = "reut2-000.xml";
+		//String filePath = "reut2-000.xml";
 		String indexPath = "";
 		IndexSearcher searcher = null;
-		List<Doc> docs = XmlParser.getDocs(filePath);
+		List<Doc> docs = null;
 		boolean exit = false;
 		System.out.println("Please load an existing index, or create a new index first!");
 		System.out.println("Type \"help load\" or \"help create\" for more information.");
@@ -49,7 +49,7 @@ public class App {
 						if (params.length == 2) {
 							indexPath = params[1];
 							IndexSearcher tmpSearcher = IndexAndSearch.loadIndex(indexPath);
-							if (searcher != null) {
+							if (tmpSearcher != null) {
 								searcher = tmpSearcher;
 								System.out.println("Using the index at " + params[1] + " from now on.");
 							} else {
