@@ -17,7 +17,6 @@ import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -37,7 +36,7 @@ public class IndexAndSearch {
 	 */
 	public static IndexSearcher indexDocs(String indexPath, List<Doc> docs) {
 		IndexSearcher searcher = null;
-		
+
 		try {
 
 			// create the target dir
@@ -66,13 +65,13 @@ public class IndexAndSearch {
 				writer.addDocument(d);
 
 			writer.close();
-			
+
 			searcher = loadIndex(indexPath);
 		} catch (IOException e) {
 			System.err.println("couldn't create index at " + indexPath);
 			e.printStackTrace();
 		}
-		
+
 		return searcher;
 	}
 
@@ -81,11 +80,11 @@ public class IndexAndSearch {
 	 * 
 	 * @param indexPath
 	 *            the path to the location of the index
-	 * @return 
-	 * @return the index searcher which is used for searching querys (null if the index was not found)
+	 * @return
+	 * @return the index searcher which is used for searching querys (null if
+	 *         the index was not found)
 	 */
-	public static  IndexSearcher loadIndex(String indexPath)
-	{
+	public static IndexSearcher loadIndex(String indexPath) {
 		IndexSearcher searcher = null;
 		try {
 			IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
@@ -118,7 +117,6 @@ public class IndexAndSearch {
 			String[] fields = { "text", "title", "date" };
 			MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
 			Query q = parser.parse(queryText);
-			System.out.println(q + " " + q.getClass().getName());
 			td = searcher.search(q, 10);
 
 		} catch (IOException e) {

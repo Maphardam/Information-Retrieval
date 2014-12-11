@@ -40,6 +40,11 @@ public class App {
 							indexPath = params[1];
 							System.out.println("Indexing of " + params[2] + " finished.");
 						}
+						else
+						{
+							System.out.println("Wrong usage of the create command.");
+							System.out.println("see \"help create\" for further information");
+						}
 					} else if (params[0].equals("load")) {
 						if (params.length == 2) {
 							indexPath = params[1];
@@ -49,6 +54,11 @@ public class App {
 							} else {
 								System.err.println("Please enter a valid path to the index.");
 							}
+						}
+						else
+						{
+							System.out.println("Wrong usage of the load command.");
+							System.out.println("see \"help load\" for further information");
 						}
 					} else if (params[0].equals("help")) {
 						if (params.length == 1) {
@@ -62,7 +72,8 @@ public class App {
 						} else {
 							if (params[1].equals("create")) {
 								System.out.println("Creating an index at a given path and index the documents stored in a xml file.");
-								System.out.println("create INDEXPATH REUTERXMLPATH");
+								System.out.println("If there already exists an index at INDEXPATH, it will be overwritten.");
+								System.out.println("create INDEXPATH XMLPATH");
 								System.out.println("       INDEXPATH  The path where the index should be saved");
 								System.out.println("       XMLPATH    The path to the xml file, where the documents are stored");
 							} else if (params[1].equals("load")) {
@@ -83,22 +94,26 @@ public class App {
 						if (params.length == 1) {
 							exit = true;
 						}
+						else
+						{
+							System.out.println("Wrong usage of the exit command.");
+							System.out.println("If you want to search for exit use \"search exit\".");
+							System.out.println("Otherwise type \"exit\" to close the application.");
+						}
 					} else {
 						if (params[0].equals("search")) {
 							query = query.substring(7, query.length());
 						}
 						if (searcher != null) {
-							// System.out.println("Für ihre Eingabe " + query +
-							// " wurden diese Artikel gefunden:");
 							TopDocs td = IndexAndSearch.searchDocs(searcher, query);
 							ScoreDoc[] sd = td.scoreDocs;
 							if (td != null) {
 								if (sd.length >= 10) {
-									System.out.println("The "+ sd.length +" best ranked documents out of " + td.totalHits + " matching documents.");
+									System.out.println("The " + sd.length + " best ranked documents out of " + td.totalHits + " matching documents:");
 								} else if (sd.length > 0) {
-									System.out.println(sd.length + " matching documents found.");
+									System.out.println(sd.length + " matching documents found:");
 								} else {
-									System.out.println("No documents match with the given Query.");
+									System.out.println("No documents match with the given Query:");
 								}
 
 								for (int i = 0; i < Math.min(10, sd.length); i++) {
