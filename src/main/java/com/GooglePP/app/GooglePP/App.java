@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 
 /**
  * Hello world!
@@ -86,8 +88,24 @@ public class App {
 							query = query.substring(7, query.length());
 						}
 						if (searcher != null) {
-							System.out.println("Für ihre Eingabe " + query + " wurden diese Artikel gefunden:");
-							IndexAndSearch.searchDocs(searcher, query);
+							// System.out.println("Für ihre Eingabe " + query +
+							// " wurden diese Artikel gefunden:");
+							TopDocs td = IndexAndSearch.searchDocs(searcher, query);
+							ScoreDoc[] sd = td.scoreDocs;
+							if (td != null) {
+								if (sd.length >= 10) {
+									System.out.println("The "+ sd.length +" best ranked documents out of " + td.totalHits + " matching documents.");
+								} else if (sd.length > 0) {
+									System.out.println(sd.length + " matching documents found.");
+								} else {
+									System.out.println("No documents match with the given Query.");
+								}
+
+								for (int i = 0; i < Math.min(10, sd.length); i++) {
+									ScoreDoc currentdoc = sd[i];
+									System.out.println(i + 1 + ". " + searcher.doc(sd[i].doc).get("title") + "( ID: " + currentdoc.doc + " relevance score: " + currentdoc.score + ")");
+								}
+							}
 						} else {
 							System.out.println("Can't search, if no index is loaded, please use either create or load.");
 							System.out.println("Type help for more information.");

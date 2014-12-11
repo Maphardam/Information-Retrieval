@@ -18,6 +18,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -103,8 +104,10 @@ public class IndexAndSearch {
 	 *            the path to the index
 	 * @param queryText
 	 *            a string containing the query text
+	 * @return the 10 best ranked documents, matching the query
 	 */
-	public static void searchDocs(IndexSearcher searcher, String queryText) {
+	public static TopDocs searchDocs(IndexSearcher searcher, String queryText) {
+		TopDocs td = null;
 		try {
 
 			// IMPORTANT: use the same analyzer for querying as used for
@@ -116,13 +119,7 @@ public class IndexAndSearch {
 			MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
 			Query q = parser.parse(queryText);
 			System.out.println(q + " " + q.getClass().getName());
-			ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
-
-			for (int i = 0; i < Math.min(10, sd.length); i++) {
-				ScoreDoc currentdoc = sd[i];
-
-				System.out.println(i + 1 + ". " + searcher.doc(sd[i].doc).get("title") + "( ID: " + currentdoc.doc + " relevance score: " + currentdoc.score + ")");
-			}
+			td = searcher.search(q, 10);
 
 		} catch (IOException e) {
 			System.err.println("Error");
@@ -131,6 +128,7 @@ public class IndexAndSearch {
 			System.err.println("Couldn't parse the query correctly!");
 			e.printStackTrace();
 		}
+		return td;
 	}
 
 }
