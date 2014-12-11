@@ -91,8 +91,9 @@ public class IndexAndSearch {
 	    String[] fields = {"text", "title", "date"};
 	    MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
 	    Query q = parser.parse(queryText);
+	    System.out.println(q + " " + q.getClass().getName());
 	    ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
-	    
+    
 		for(int i=0; i< Math.min(10, sd.length); i++){
 			ScoreDoc currentdoc = sd[i];
 			

@@ -66,7 +66,8 @@ public class Doc {
 		Field id = new IntField("id", m_id, Field.Store.YES);
 		d.add(id);
 		
-		Field date = new IntField("date", Integer.parseInt(DateTools.dateToString(m_date, DateTools.Resolution.DAY)), Field.Store.YES);
+		System.out.println(m_date);
+		Field date = new TextField("date", DateTools.dateToString(m_date, DateTools.Resolution.DAY), Field.Store.YES);
 		d.add(date);
 		
 		Field title = new TextField("title", m_title, Field.Store.YES);
