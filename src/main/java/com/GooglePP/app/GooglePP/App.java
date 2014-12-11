@@ -48,8 +48,9 @@ public class App {
 					} else if (params[0].equals("load")) {
 						if (params.length == 2) {
 							indexPath = params[1];
-							searcher = IndexAndSearch.loadIndex(indexPath);
+							IndexSearcher tmpSearcher = IndexAndSearch.loadIndex(indexPath);
 							if (searcher != null) {
+								searcher = tmpSearcher;
 								System.out.println("Using the index at " + params[1] + " from now on.");
 							} else {
 								System.err.println("Please enter a valid path to the index.");
