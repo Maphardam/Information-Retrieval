@@ -31,8 +31,12 @@ public class IndexAndSearch {
 	 *            the path to the index
 	 * @param docs
 	 *            a list of com.GooglePP.app.GooglePP.Doc
+	 * @return the index searcher to the newly created index, which is used for
+	 *         searching querys
 	 */
-	public static void indexDocs(String indexPath, List<Doc> docs) {
+	public static IndexSearcher indexDocs(String indexPath, List<Doc> docs) {
+		IndexSearcher searcher = null;
+		
 		try {
 
 			// create the target dir
@@ -50,8 +54,7 @@ public class IndexAndSearch {
 			// hmm yeah, i'm sure this is important as well...
 			// jk, this is the configuration of the index writer -> we will
 			// always create a new index
-			IndexWriterConfig iwc = new IndexWriterConfig(Version.LATEST,
-					analyzer);
+			IndexWriterConfig iwc = new IndexWriterConfig(Version.LATEST, analyzer);
 			iwc.setOpenMode(OpenMode.CREATE);
 
 			// set our index writer
@@ -62,11 +65,35 @@ public class IndexAndSearch {
 				writer.addDocument(d);
 
 			writer.close();
-
+			
+			searcher = loadIndex(indexPath);
 		} catch (IOException e) {
-			System.out.println("Error");
+			System.err.println("couldn't create index at " + indexPath);
+			e.printStackTrace();
 		}
+		
+		return searcher;
+	}
 
+	/**
+	 * load index
+	 * 
+	 * @param indexPath
+	 *            the path to the location of the index
+	 * @return 
+	 * @return the index searcher which is used for searching querys (null if the index was not found)
+	 */
+	public static  IndexSearcher loadIndex(String indexPath)
+	{
+		IndexSearcher searcher = null;
+		try {
+			IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+			searcher = new IndexSearcher(reader);
+		} catch (IOException e) {
+			System.err.println("couldn't load index at :" + indexPath);
+			e.printStackTrace();
+		}
+		return searcher;
 	}
 
 	/**
@@ -77,32 +104,33 @@ public class IndexAndSearch {
 	 * @param queryText
 	 *            a string containing the query text
 	 */
-	public static void searchDocs(String indexPath, String queryText) {
+	public static void searchDocs(IndexSearcher searcher, String queryText) {
 		try {
-			
-		//define the index searcher and the dir of our index
-		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
-	    IndexSearcher searcher = new IndexSearcher(reader);
-	    
-	    //IMPORTANT: use the same analyzer for querying as used for indexing
-	    Analyzer analyzer = new StandardAnalyzer();
-	    
-	    //query the queryText to a correct query
-	    String[] fields = {"text", "title", "date"};
-	    MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
-	    Query q = parser.parse(queryText);
-	    System.out.println(q + " " + q.getClass().getName());
-	    ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
-    
-		for(int i=0; i< Math.min(10, sd.length); i++){
-			ScoreDoc currentdoc = sd[i];
-			
-			System.out.println(i+1 + ". " + searcher.doc(sd[i].doc).get("title")+ 
-					"( ID: " +currentdoc.doc + " relevance score: "+currentdoc.score + ")" );
+
+			// IMPORTANT: use the same analyzer for querying as used for
+			// indexing
+			Analyzer analyzer = new StandardAnalyzer();
+
+			// query the queryText to a correct query
+			String[] fields = { "text", "title", "date" };
+			MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
+			Query q = parser.parse(queryText);
+			System.out.println(q + " " + q.getClass().getName());
+			ScoreDoc[] sd = searcher.search(q, 10).scoreDocs;
+
+			for (int i = 0; i < Math.min(10, sd.length); i++) {
+				ScoreDoc currentdoc = sd[i];
+
+				System.out.println(i + 1 + ". " + searcher.doc(sd[i].doc).get("title") + "( ID: " + currentdoc.doc + " relevance score: " + currentdoc.score + ")");
+			}
+
+		} catch (IOException e) {
+			System.err.println("Error");
+			e.printStackTrace();
+		} catch (ParseException e) {
+			System.err.println("Couldn't parse the query correctly!");
+			e.printStackTrace();
 		}
-	    
-		} catch (IOException e){System.out.println("Error");} 
-		  catch (ParseException e){System.out.println("Another Error");}
 	}
 
 }
