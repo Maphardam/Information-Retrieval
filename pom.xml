@@ -72,5 +72,10 @@
       <artifactId>analyzers-common</artifactId>
       <version>4.10.2</version>
     </dependency>
+    <dependency>
+    	<groupId>org.jsoup</groupId>
+    	<artifactId>jsoup</artifactId>
+    	<version>1.8.1</version>
+    </dependency>
   </dependencies>
 </project>
