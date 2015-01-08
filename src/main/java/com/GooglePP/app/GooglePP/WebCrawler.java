@@ -15,12 +15,12 @@ public class WebCrawler {
 	
 	public static void main (String[] args){
 		WebCrawler wc = new WebCrawler();
-		wc.crawl("http://cs.ovgu.de");
+		wc.crawl("http://cs.ovgu.de", 3);
 	}
 	
 	public WebCrawler(){
 		alreadyCrawled = new ArrayList<String>();
-		blacklist = new String[8];
+		blacklist = new String[9];
 		blacklist[0] = "b_primary_content";
 		blacklist[1] = "b_primary_navi_box";
 		blacklist[2] = "b_primary_navi_selectbox";
@@ -29,37 +29,63 @@ public class WebCrawler {
 		blacklist[5] = "b_breadcrumb_navi";
 		blacklist[6] = "b_serach";
 		blacklist[7] = "b_language";
+		blacklist[8] = "app.readspeaker";
 	}
 	
-	public void crawl (String url){
+	public void crawl (String url, int depth){
+		
 		try {
 			// get the base URL the URL is redirecting to
+			// TODO this command is only useful for the first call. maybe we find sth better
 			String  baseURL = Jsoup.connect(url).followRedirects(true).execute().url().toExternalForm();
+			
+			System.out.println(depth + " " + baseURL);
+			// don't visit this URL a second time
+			alreadyCrawled.add(baseURL);
+			
 			// get the Document
 			// NOTE: if its not a readable file (e.g. a pdf), 
 			// it will throw a MalformedURLException, which is catched by the IOException
 			Document doc = Jsoup.connect(baseURL).get();
-			System.out.println(url);
-
-			// don't visit this URL a second time
-			alreadyCrawled.add(url);
 			
 			// TODO do sth with the document
+			//#############################################################################################################
+			//########################################### insert indexing and so on########################################
+			//#############################################################################################################
 			
+			// if the maximum depth is reached, stop here
+			if (depth == 0) return;
 			
 			// get all URLs referred to in this document
 			Elements links = doc.select("a[href]");
 			for(Element link: links){
 				String absHref = link.attr("abs:href");
 				
+				//this is the case, if it's a javascript command and not a real URL
+				if (absHref == "") continue;
+				
+				//normalize links
+				String baseAbsHref = Jsoup.connect(absHref).followRedirects(true).execute().url().toExternalForm();	
+				
+				// TODO if the start page has a #, it is not noticed :(
+				if (baseAbsHref.endsWith("#"))
+					baseAbsHref = baseAbsHref.substring(0, baseAbsHref.length() - 1);
+				
 				// crawl only sites that are part of cs.uni-ḿagdeburg.de, are not already crawled and are not part of the
 				// blacklist
-				if(absHref.contains("cs.uni-magdeburg.de") && !alreadyCrawled.contains(absHref) && !containsBlacklist(absHref)){
-					crawl(absHref);
+				if(isValidSubdomain(baseAbsHref)){
+
+					// prevent reducing depth, if its -1 (-1 means no depth)
+					if (depth == -1) crawl(baseAbsHref, depth);
+					else crawl(baseAbsHref, depth - 1);
 				}
 			}
 		} catch (IOException e) {}
 
+	}
+	
+	public void crawl(String url){
+		crawl(url, -1);
 	}
 	
 	private boolean containsBlacklist(String url){
@@ -67,5 +93,9 @@ public class WebCrawler {
 			if (url.contains(blacklist[i]))
 				return true;		
 		return false;
+	}
+	
+	private boolean isValidSubdomain(String url){
+		return url.contains("cs.uni-magdeburg.de") && !alreadyCrawled.contains(url) && !containsBlacklist(url);
 	}
 }
