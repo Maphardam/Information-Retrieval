@@ -1,53 +1,36 @@
 package com.GooglePP.app.GooglePP;
 
-import java.util.Date;
-
-import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.TextField;
 
 /**
  * a class to store information about a document
- *
  */
 public class Doc {
 	/**
-	 * constructor, which takes the id, date, title, and the text of a document
+	 * constructor, which takes the url, title, and the text of a document
 	 * 
-	 * @param id
-	 *            an unique id, which is assigned to the document
-	 * @param date
-	 *            the date this document got published
+	 * @param url
+	 *            the address of the document
 	 * @param title
-	 *            the title of the document
+	 * 			  the title of the document
 	 * @param text
 	 *            the text belonging to the document
 	 */
-	public Doc(int id, Date date, String title, String text) {
-		m_id = id;
-		m_date = date;
+	public Doc(String url, String title, String text) {
+		m_url = url;
 		m_title = title;
 		m_text = text;
 	}
 
 	/**
-	 * getter for the id
+	 * getter for the url
 	 * 
-	 * @return the unique id of this document
+	 * @return the url of this document
 	 */
-	public int getId() {
-		return m_id;
-	}
-
-	/**
-	 * getter for the date
-	 * 
-	 * @return the date this document got published
-	 */
-	public Date getDate() {
-		return m_date;
+	public String getUrl() {
+		return m_url;
 	}
 
 	/**
@@ -77,12 +60,9 @@ public class Doc {
 	public Document toDocument() {
 		Document d = new Document();
 
-		Field id = new IntField("id", m_id, Field.Store.YES);
-		d.add(id);
-
-		Field date = new TextField("date", DateTools.dateToString(m_date, DateTools.Resolution.DAY), Field.Store.YES);
-		d.add(date);
-
+		Field url = new TextField("url", m_url, Field.Store.YES);
+		d.add(url);
+		
 		Field title = new TextField("title", m_title, Field.Store.YES);
 		d.add(title);
 
@@ -93,13 +73,9 @@ public class Doc {
 	}
 
 	/**
-	 * the unique id of this document
+	 * the url of this document
 	 */
-	private int m_id;
-	/**
-	 * the date this document got published
-	 */
-	private Date m_date;
+	private String m_url;
 	/**
 	 * the title of this document
 	 */

@@ -38,7 +38,6 @@ public class IndexAndSearch {
 		IndexSearcher searcher = null;
 
 		try {
-
 			// create the target dir
 			Directory dir = null;
 			dir = FSDirectory.open(new File(indexPath));
@@ -114,7 +113,7 @@ public class IndexAndSearch {
 			Analyzer analyzer = new StandardAnalyzer();
 
 			// query the queryText to a correct query
-			String[] fields = { "text", "title", "date" };
+			String[] fields = { "text", "title"};
 			MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
 			Query q = parser.parse(queryText);
 			td = searcher.search(q, 10);

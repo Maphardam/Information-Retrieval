@@ -2,6 +2,8 @@ package com.GooglePP.app.GooglePP;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,6 +54,15 @@ public class WebCrawler {
 			//#############################################################################################################
 			//########################################### insert indexing and so on########################################
 			//#############################################################################################################
+			String plainText = doc.body().toString();
+			Pattern p = Pattern.compile(".*<!-- RSPEAK_START -->(.*)<!-- RSPEAK_STOP -->.*", Pattern.DOTALL);
+			Matcher m = p.matcher(plainText);
+			String text = Jsoup.parse(m.group(1)).text();
+			System.out.println(text);
+			Doc currentSite = new Doc(url, doc.title(), text);
+			
+			// TODO indexing
+			
 			
 			// if the maximum depth is reached, stop here
 			if (depth == 0) return;
