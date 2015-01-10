@@ -15,11 +15,6 @@ public class WebCrawler {
 	ArrayList<String> alreadyCrawled;
 	String[] blacklist;
 	
-	public static void main (String[] args){
-		WebCrawler wc = new WebCrawler();
-		wc.crawl("http://cs.ovgu.de", 3);
-	}
-	
 	public WebCrawler(){
 		alreadyCrawled = new ArrayList<String>();
 		blacklist = new String[9];
@@ -34,14 +29,14 @@ public class WebCrawler {
 		blacklist[8] = "app.readspeaker";
 	}
 	
-	public void crawl (String url, int depth){
+	public ArrayList<Doc> crawl (String url, ArrayList<Doc> docs, int depth){
 		
 		try {
 			// get the base URL the URL is redirecting to
 			// TODO this command is only useful for the first call. maybe we find sth better
 			String  baseURL = Jsoup.connect(url).followRedirects(true).execute().url().toExternalForm();
 			
-			System.out.println(depth + " " + baseURL);
+			//System.out.println(depth + " " + baseURL);
 			// don't visit this URL a second time
 			alreadyCrawled.add(baseURL);
 			
@@ -57,15 +52,18 @@ public class WebCrawler {
 			String plainText = doc.body().toString();
 			Pattern p = Pattern.compile(".*<!-- RSPEAK_START -->(.*)<!-- RSPEAK_STOP -->.*", Pattern.DOTALL);
 			Matcher m = p.matcher(plainText);
+			//System.out.println(plainText);
+			m.find();
 			String text = Jsoup.parse(m.group(1)).text();
-			System.out.println(text);
+			//System.out.println(text);
+
 			Doc currentSite = new Doc(url, doc.title(), text);
-			
+			docs.add(currentSite);
 			// TODO indexing
 			
 			
 			// if the maximum depth is reached, stop here
-			if (depth == 0) return;
+			if (depth == 0) return docs;
 			
 			// get all URLs referred to in this document
 			Elements links = doc.select("a[href]");
@@ -87,16 +85,17 @@ public class WebCrawler {
 				if(isValidSubdomain(baseAbsHref)){
 
 					// prevent reducing depth, if its -1 (-1 means no depth)
-					if (depth == -1) crawl(baseAbsHref, depth);
-					else crawl(baseAbsHref, depth - 1);
+					if (depth == -1) crawl(baseAbsHref, docs, depth);
+					else crawl(baseAbsHref, docs, depth - 1);
 				}
 			}
 		} catch (IOException e) {}
-
+		
+		return docs;
 	}
 	
 	public void crawl(String url){
-		crawl(url, -1);
+		crawl(url, new ArrayList<Doc>(), -1);
 	}
 	
 	private boolean containsBlacklist(String url){

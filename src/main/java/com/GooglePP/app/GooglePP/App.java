@@ -1,24 +1,40 @@
-//package com.GooglePP.app.GooglePP;
-//
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.InputStreamReader;
-//import java.util.List;
-//
-//import org.apache.lucene.search.IndexSearcher;
-//import org.apache.lucene.search.ScoreDoc;
-//import org.apache.lucene.search.TopDocs;
-//
-///**
-// * Hello world!
-// *
-// */
-//public class App {
-//	public static void main(String[] args) {
-//		//String filePath = "reut2-000.xml";
-//		String indexPath = "";
-//		IndexSearcher searcher = null;
-//		List<Doc> docs = null;
+package com.GooglePP.app.GooglePP;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+
+/**
+ * Hello world!
+ *
+ */
+public class App {
+	public static void main(String[] args) {
+		//String filePath = "reut2-000.xml";
+		String indexPath = "";
+		IndexSearcher searcher = null;
+		List<Doc> docs = null;
+		WebCrawler wc = new WebCrawler();
+		//docs = wc.crawl("http://cs.ovgu.de", new ArrayList<Doc>(), 1);
+		//IndexAndSearch.indexDocs("index", docs);
+		searcher = IndexAndSearch.loadIndex("index");
+		TopDocs td = IndexAndSearch.searchDocs(searcher, "aufklappen");
+		ScoreDoc[] sd = td.scoreDocs;
+		for (int i = 0; i < Math.min(10, sd.length); i++) {
+			ScoreDoc currentdoc = sd[i];
+			try {
+				System.out.println(i + 1 + ". " + searcher.doc(sd[i].doc).get("title") + "( ID: " + currentdoc.doc + " relevance score: " + currentdoc.score + ")");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 //		boolean exit = false;
 //		System.out.println("Please load an existing index, or create a new index first!");
 //		System.out.println("Type \"help load\" or \"help create\" for more information.");
@@ -133,5 +149,5 @@
 //				e.printStackTrace();
 //			}
 //		}
-//	}
-//}
+	}
+}
