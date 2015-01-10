@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jsoup</groupId>
-  <artifactId>evalpostfix</artifactId>
+  <artifactId>jsoup</artifactId>
   <version>1.8.1</version>
   <description>POM was created from install:install-file</description>
 </project>
