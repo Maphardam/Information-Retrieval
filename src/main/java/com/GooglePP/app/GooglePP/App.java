@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.search.IndexSearcher;
@@ -22,20 +21,7 @@ public class App {
 		String indexPath = "";
 		IndexSearcher searcher = null;
 		List<Doc> docs = null;
-		WebCrawler wc = new WebCrawler();
 
-//		searcher = IndexAndSearch.loadIndex("index");
-//		TopDocs td = IndexAndSearch.searchDocs(searcher, "aufklappen");
-//		ScoreDoc[] sd = td.scoreDocs;
-//		for (int i = 0; i < Math.min(10, sd.length); i++) {
-//			ScoreDoc currentdoc = sd[i];
-//			try {
-//				System.out.println(i + 1 + ". " + searcher.doc(sd[i].doc).get("title") + "( ID: " + currentdoc.doc + " relevance score: " + currentdoc.score + ")");
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 		boolean exit = false;
 		System.out.println("Please load an existing index, or create a new index first!");
 		System.out.println("Type \"help load\" or \"help create\" for more information.");
@@ -50,19 +36,21 @@ public class App {
 				if (params.length > 0) {
 					if (params[0].equals("create")) {
 						if (params.length == 4) {
+							if (!params[2].startsWith("http://"))
+								params[2] = "http://" + params[2];
 							if (!isValidURL(params[2]))
 							{
-								System.out.println("Wrong usage of the create command.");
+								System.out.println("Invalid URL.");
 								System.out.println("see \"help create\" for further information");
 							}
-							if (!isNumeric(params[3]))
+							if (!isValidNumeric(params[3]))
 							{
-								System.out.println("Wrong usage of the create command.");
+								System.out.println("Invalid depth.");
 								System.out.println("see \"help create\" for further information");
 							}
 							System.out.println("Getting documents from " + params[2] + " with recursion depth " + params[3] + ".");
 
-							docs = wc.crawl(params[2], new ArrayList<Doc>(), Integer.parseInt(params[3]));
+							docs = WebCrawler.crawl(params[2], Integer.parseInt(params[3]));
 							System.out.println("Creating index at " + params[1] + ".");
 							IndexAndSearch.indexDocs(params[1], docs);
 							indexPath = params[1];
@@ -164,14 +152,18 @@ public class App {
 		}		
 	}
 	
-	private static boolean isNumeric(String str) {  
-	  try {  
-	    Integer.parseInt(str);  
+	private static boolean isValidNumeric(String str) {  
+	  int i = 0;
+		try {  
+	    i = Integer.parseInt(str);  
 	  }  
 	  catch(NumberFormatException nfe) {  
 	    return false;  
-	  }  
-	  return true;  
+	  } 
+	  if (i >= 0)
+		  return true;
+	  else
+		  return false;
 	}
 	
 	private static boolean isValidURL(String str) {

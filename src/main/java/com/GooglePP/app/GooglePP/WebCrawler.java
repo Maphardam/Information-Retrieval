@@ -12,10 +12,10 @@ import org.jsoup.nodes.Element;
 
 public class WebCrawler {
 	
-	ArrayList<String> alreadyCrawled;
-	String[] blacklist;
+	static ArrayList<String> alreadyCrawled;
+	static String[] blacklist;
 	
-	public WebCrawler(){
+	public static ArrayList<Doc> crawl (String url, int depth){
 		alreadyCrawled = new ArrayList<String>();
 		blacklist = new String[9];
 		blacklist[0] = "b_primary_content";
@@ -27,28 +27,30 @@ public class WebCrawler {
 		blacklist[6] = "b_serach";
 		blacklist[7] = "b_language";
 		blacklist[8] = "app.readspeaker";
+		
+		String baseURL = "";
+		try {
+			baseURL = Jsoup.connect(url).followRedirects(true).execute().url().toExternalForm();
+		} catch (IOException e) {
+			System.err.println("An error occured.");
+			return new ArrayList<Doc>();
+		}
+		return _crawl(baseURL, new ArrayList<Doc>(), depth);
 	}
-	
-	public ArrayList<Doc> crawl (String url, ArrayList<Doc> docs, int depth){
+	//TODO mache static
+	public static ArrayList<Doc> _crawl (String url, ArrayList<Doc> docs, int depth){
 		
 		try {
-			// get the base URL the URL is redirecting to
-			// TODO this command is only useful for the first call. maybe we find sth better
-			String  baseURL = Jsoup.connect(url).followRedirects(true).execute().url().toExternalForm();
 			
-			//System.out.println(depth + " " + baseURL);
 			// don't visit this URL a second time
-			alreadyCrawled.add(baseURL);
+			alreadyCrawled.add(url);
 			
 			// get the Document
 			// NOTE: if its not a readable file (e.g. a pdf), 
 			// it will throw a MalformedURLException, which is catched by the IOException
-			Document doc = Jsoup.connect(baseURL).get();
+			Document doc = Jsoup.connect(url).get();
 			
-			// TODO do sth with the document
-			//#############################################################################################################
-			//########################################### insert indexing and so on########################################
-			//#############################################################################################################
+			// read the content
 			String plainText = doc.body().toString();
 			Pattern p = Pattern.compile(".*<!-- RSPEAK_START -->(.*)<!-- RSPEAK_STOP -->.*", Pattern.DOTALL);
 			Matcher m = p.matcher(plainText);
@@ -59,8 +61,6 @@ public class WebCrawler {
 
 			Doc currentSite = new Doc(url, doc.title(), text);
 			docs.add(currentSite);
-			// TODO indexing
-			
 			
 			// if the maximum depth is reached, stop here
 			if (depth == 0) return docs;
@@ -82,30 +82,22 @@ public class WebCrawler {
 				
 				// crawl only sites that are part of cs.uni-ḿagdeburg.de, are not already crawled and are not part of the
 				// blacklist
-				if(isValidSubdomain(baseAbsHref)){
-
-					// prevent reducing depth, if its -1 (-1 means no depth)
-					if (depth == -1) crawl(baseAbsHref, docs, depth);
-					else crawl(baseAbsHref, docs, depth - 1);
-				}
+				if(isValidSubdomain(baseAbsHref))
+					_crawl(baseAbsHref, docs, depth - 1);
 			}
 		} catch (IOException e) {}
 		
 		return docs;
 	}
 	
-	public void crawl(String url){
-		crawl(url, new ArrayList<Doc>(), -1);
-	}
-	
-	private boolean containsBlacklist(String url){
+	private static boolean containsBlacklist(String url){
 		for (int i = 0; i < blacklist.length; i++)
 			if (url.contains(blacklist[i]))
 				return true;		
 		return false;
 	}
 	
-	private boolean isValidSubdomain(String url){
+	private static boolean isValidSubdomain(String url){
 		return url.contains("cs.uni-magdeburg.de") && !alreadyCrawled.contains(url) && !containsBlacklist(url);
 	}
 }
