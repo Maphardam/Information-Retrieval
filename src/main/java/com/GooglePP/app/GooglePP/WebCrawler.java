@@ -55,7 +55,12 @@ public class WebCrawler {
 			Pattern p = Pattern.compile(".*<!-- RSPEAK_START -->(.*)<!-- RSPEAK_STOP -->.*", Pattern.DOTALL);
 			Matcher m = p.matcher(plainText);
 			//System.out.println(plainText);
-			m.find();
+			if(!m.find())
+			{
+//				System.out.println(plainText);
+//				System.out.println(url);
+				return docs;
+			}
 			String text = Jsoup.parse(m.group(1)).text();
 			//System.out.println(text);
 
