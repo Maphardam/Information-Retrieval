@@ -6,7 +6,7 @@ This repository contains the source code developed in the course "Information Re
 Compiling & execution
 ==================================================================================================
 To create this project with maven excute the command: mvn package .
-With java -jar "target/GooglePP-1.jar" you can execute this application.
+With java -jar "target/GooglePP-2.jar" you can execute this application.
 (The number after GooglePP- should indicate the assignment)
 
 
@@ -20,7 +20,7 @@ help
 
 create
 	To create a new index type create INDEXPATH XMLPATH, where INDEXPATH is the path, where the
-	index should be saved to. XMLPATH is the path, where the xml file with the documents is stored.
+	index should be saved to. URL is the url, where the crawling should start and DEPTH is the recursion depth of the crawling.
 	
 load
 	With load INDEXPATH you can load an already existing index, which you have created with lucene.

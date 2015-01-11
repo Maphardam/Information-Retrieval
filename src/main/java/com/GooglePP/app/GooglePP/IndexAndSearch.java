@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.de.GermanAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -48,7 +48,7 @@ public class IndexAndSearch {
 				documents.add(d.toDocument());
 
 			// define an analyzer, which preprocesses the text
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new GermanAnalyzer();
 
 			// hmm yeah, i'm sure this is important as well...
 			// jk, this is the configuration of the index writer -> we will
@@ -110,7 +110,7 @@ public class IndexAndSearch {
 
 			// IMPORTANT: use the same analyzer for querying as used for
 			// indexing
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new GermanAnalyzer();
 
 			// query the queryText to a correct query
 			String[] fields = { "text", "title"};

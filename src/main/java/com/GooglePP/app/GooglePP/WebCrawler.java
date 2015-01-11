@@ -31,13 +31,16 @@ public class WebCrawler {
 		String baseURL = "";
 		try {
 			baseURL = Jsoup.connect(url).followRedirects(true).execute().url().toExternalForm();
+			
+			if (baseURL.endsWith("#"))
+				baseURL = baseURL.substring(0, baseURL.length() - 1);
 		} catch (IOException e) {
-			System.err.println("An error occured.");
+			System.err.println("An error occured. Check if your URL is valid!");
 			return new ArrayList<Doc>();
 		}
 		return _crawl(baseURL, new ArrayList<Doc>(), depth);
 	}
-	//TODO mache static
+
 	public static ArrayList<Doc> _crawl (String url, ArrayList<Doc> docs, int depth){
 		
 		try {
@@ -81,7 +84,6 @@ public class WebCrawler {
 				//normalize links
 				String baseAbsHref = Jsoup.connect(absHref).followRedirects(true).execute().url().toExternalForm();	
 				
-				// TODO if the start page has a #, it is not noticed :(
 				if (baseAbsHref.endsWith("#"))
 					baseAbsHref = baseAbsHref.substring(0, baseAbsHref.length() - 1);
 				

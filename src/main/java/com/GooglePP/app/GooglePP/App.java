@@ -3,8 +3,6 @@ package com.GooglePP.app.GooglePP;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.lucene.search.IndexSearcher;
@@ -38,11 +36,6 @@ public class App {
 						if (params.length == 4) {
 							if (!params[2].startsWith("http://"))
 								params[2] = "http://" + params[2];
-							if (!isValidURL(params[2]))
-							{
-								System.out.println("Invalid URL.");
-								System.out.println("see \"help create\" for further information");
-							}
 							if (!isValidNumeric(params[3]))
 							{
 								System.out.println("Invalid depth.");
@@ -52,9 +45,9 @@ public class App {
 
 							docs = WebCrawler.crawl(params[2], Integer.parseInt(params[3]));
 							System.out.println("Creating index at " + params[1] + ".");
-							IndexAndSearch.indexDocs(params[1], docs);
+							searcher = IndexAndSearch.indexDocs(params[1], docs);
 							indexPath = params[1];
-							System.out.println("Indexing of " + params[2] + "with recursion depth " + params[3] + " finished.");
+							System.out.println("Indexing of " + params[2] + " with recursion depth " + params[3] + " finished.");
 						}
 						else
 						{
@@ -136,7 +129,7 @@ public class App {
 
 								for (int i = 0; i < Math.min(10, sd.length); i++) {
 									ScoreDoc currentdoc = sd[i];
-									System.out.println(i + 1 + ". " + searcher.doc(sd[i].doc).get("title") + "( ID: " + currentdoc.doc + " relevance score: " + currentdoc.score + ")");
+									System.out.println(i + 1 + ". " + searcher.doc(currentdoc.doc).get("title") + "(URL: " + searcher.doc(currentdoc.doc).get("url") + " ,ID: " + currentdoc.doc + " ,relevance score: " + currentdoc.score + ")");
 								}
 							}
 						} else {
@@ -165,14 +158,4 @@ public class App {
 	  else
 		  return false;
 	}
-	
-	private static boolean isValidURL(String str) {
-		try {
-			new URL(str);
-		} catch (MalformedURLException mue) {
-			return false;
-		}
-		return true;
-	}
-	
 }

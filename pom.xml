@@ -4,7 +4,7 @@
 
   <groupId>com.GooglePP.app</groupId>
   <artifactId>GooglePP</artifactId>
-  <version>1</version>
+  <version>2</version>
   <packaging>jar</packaging>
 
   <name>GooglePP</name>
